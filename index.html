@@ -46,8 +46,11 @@
     }
   </style>
 
-  <!-- SKRIP CLIENT SDK (Penangkap Bug Sederhana) -->
+  <!-- SKRIP CLIENT SDK (Penangkap & Pengirim Bug) -->
   <script>
+    // URL Backend Vercel milikmu
+    const API_URL = "https://bug-tracker-dashboar.vercel.app";
+
     window.onerror = function (message, source, lineno, colno, error) {
       const payload = {
         app_id: "web-uji-coba",
@@ -60,9 +63,26 @@
       };
 
       console.log("🔴 [SDK BUG TRACKER] Tangkap Error:", payload);
-      document.getElementById("log").innerText = "🔴 Error tertangkap di console browser! (Siap dikirim ke Pusat Kontrol)";
-      
-      // Nanti di sini kita tambahkan perintah fetch() untuk kirim data ke Server Pusat
+      document.getElementById("log").innerText = "🔴 Memproses & Mengirim laporan bug ke Vercel...";
+
+      // Mengirim data bug langsung ke server Vercel
+      fetch(`${API_URL}/api/bugs`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(res => {
+        if(res.ok) {
+          document.getElementById("log").innerText = "✅ Error berhasil dikirim ke Server Vercel & AI Gemini!";
+        } else {
+          document.getElementById("log").innerText = "⚠️ Gagal mengirim bug ke server.";
+        }
+      })
+      .catch(err => {
+        document.getElementById("log").innerText = "❌ Kesalahan koneksi ke server Vercel.";
+        console.error(err);
+      });
+
       return true; // Mencegah error bawaan muncul polos di browser
     };
   </script>
