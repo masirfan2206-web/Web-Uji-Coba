@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Uji Coba Bug Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f4f7f6;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    h1 { color: #333; }
+    p { color: #666; }
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 14px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .btn-1 { background-color: #e74c3c; color: white; }
+    .btn-2 { background-color: #e67e22; color: white; }
+    .btn-3 { background-color: #8e44ad; color: white; }
+    button:hover { opacity: 0.9; }
+    #log {
+      margin-top: 20px;
+      padding: 10px;
+      background: #2c3e50;
+      color: #ecf0f1;
+      border-radius: 5px;
+      font-family: monospace;
+      min-height: 50px;
+    }
+  </style>
+
+  <!-- SKRIP CLIENT SDK (Penangkap Bug Sederhana) -->
+  <script>
+    window.onerror = function (message, source, lineno, colno, error) {
+      const payload = {
+        app_id: "web-uji-coba",
+        error_message: message,
+        file: source,
+        line: lineno,
+        column: colno,
+        stack_trace: error ? error.stack : "No stack trace",
+        timestamp: new Date().toISOString()
+      };
+
+      console.log("🔴 [SDK BUG TRACKER] Tangkap Error:", payload);
+      document.getElementById("log").innerText = "🔴 Error tertangkap di console browser! (Siap dikirim ke Pusat Kontrol)";
+      
+      // Nanti di sini kita tambahkan perintah fetch() untuk kirim data ke Server Pusat
+      return true; // Mencegah error bawaan muncul polos di browser
+    };
+  </script>
+</head>
+<body>
+
+  <h1>🧪 Web Uji Coba Bug Tracker</h1>
+  <p>Pilih tombol di bawah untuk memicu bug buatan:</p>
+
+  <div class="btn-group">
+    <button class="btn-1" onclick="pemicuUndefinedFunction()">1. Picu Error: Panggil Fungsi Ghoib</button>
+    <button class="btn-2" onclick="pemicuNullProperty()">2. Picu Error: Akses Properti dari Null</button>
+    <button class="btn-3" onclick="pemicuSyntaxLogic()">3. Picu Error: Logika Data Array Kosong</button>
+  </div>
+
+  <h3>Status Log SDK:</h3>
+  <div id="log">Belum ada error yang dipicu.</div>
+
+  <script>
+    // FUNGSI-FUNGSI YANG SENGAJA MEMILIKI BUG
+
+    function pemicuUndefinedFunction() {
+      // Bug: Memanggil fungsi yang belum pernah dibuat
+      fungsiYangBelumDibuat();
+    }
+
+    function pemicuNullProperty() {
+      // Bug: Membaca properti dari data null
+      let dataPengguna = null;
+      console.log(dataPengguna.nama);
+    }
+
+    function pemicuSyntaxLogic() {
+      // Bug: Mengolah data yang bukan array dengan method .map()
+      let daftarBarang = "Bukan Array";
+      daftarBarang.map(item => console.log(item));
+    }
+  </script>
+
+</body>
+</html>
